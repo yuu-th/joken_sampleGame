@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    Rigidbody2D rb;
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    
+    void FixedUpdate()
     {
-        
+        if(rb.velocity.x > -2)
+        {
+            rb.AddForce(new Vector2(-50, 0));
+        }
     }
 }
