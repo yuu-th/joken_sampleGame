@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;//Rigidbody2D型の変数
+    [SerializeField] private float jump_power = 4;
+    [SerializeField] private float max_speed = 5;
+    [SerializeField] private float accelerate_force = 50;
     bool is_field = false;
     void Start()
     {
@@ -18,17 +21,17 @@ public class PlayerController : MonoBehaviour
     {
         if(Input.GetAxisRaw("Horizontal") > 0)//もし右矢印が押されていたら
         {
-            if(rb.velocity.x < 5)//もし正方向への速度が7以下なら
+            if(rb.velocity.x < this.max_speed)//もし正方向への速度が5以下なら
             {
                 //右に力を加える処理
-                rb.AddForce(new Vector2(50, 0));
+                rb.AddForce(new Vector2(this.accelerate_force, 0));
             }
         } else if(Input.GetAxisRaw("Horizontal") < 0)//もし左矢印が押されていたら
         {
-            if( rb.velocity.x > -5)
+            if( rb.velocity.x > -this.max_speed)
             {
                 //左に力を加える処理
-                rb.AddForce(new Vector2(-50, 0));
+                rb.AddForce(new Vector2(-this.accelerate_force, 0));
             }
         } else if(Input.GetAxisRaw("Horizontal") == 0)//どっちも押されていないなら
         {
@@ -37,8 +40,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && is_field == true)
         {
-            Debug.Log("junp");
-            rb.AddForce(new Vector2(0, 4), ForceMode2D.Impulse);
+            this.Jump();
         }
     }
 
@@ -50,10 +52,10 @@ public class PlayerController : MonoBehaviour
             Debug.Log(contact_face.normal.y);
             if (contact_face.normal.y >= 0.7f)
             {
-                Destroy(collision.gameObject);
+                this.StepOnEnemy(collision);
             } else
             {
-                Destroy(gameObject);
+                this.Die();
             }
         } else if(collision.gameObject.tag == "Goal")
         {
@@ -66,5 +68,23 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         is_field = false;
+    }
+
+    public void StepOnEnemy(Collision2D collision)
+    {
+        Destroy(collision.gameObject);
+
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);Destroy(gameObject);
+        
+    }
+
+    public void Jump()
+    {
+        Debug.Log("jump");
+        rb.AddForce(new Vector2(0, this.jump_power), ForceMode2D.Impulse);
     }
 }
