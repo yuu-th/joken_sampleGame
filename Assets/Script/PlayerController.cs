@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jump_power = 4;
     [SerializeField] private float max_speed = 5;
     [SerializeField] private float accelerate_force = 50;
+
+    public GameObject fire_boll;
     bool is_field = false;
     void Start()
     {
@@ -46,9 +48,9 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Enemy")
+        ContactPoint2D contact_face = collision.contacts[0];
+        if (collision.gameObject.tag == "Enemy")
         {           
-            ContactPoint2D contact_face = collision.contacts[0];
             Debug.Log(contact_face.normal.y);
             if (contact_face.normal.y >= 0.7f)
             {
@@ -62,7 +64,18 @@ public class PlayerController : MonoBehaviour
             //ƒS[ƒ‹ŒŸ’m
             SceneManager.LoadScene("ResultScene");
         }
-        is_field = true;
+
+        
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        ContactPoint2D contact_face = collision.contacts[0];
+        //Debug.Log(contact_face.normal.y);
+        if (contact_face.normal.y >= 0.5f)
+        {
+            is_field = true;
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -86,5 +99,10 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("jump");
         rb.AddForce(new Vector2(0, this.jump_power), ForceMode2D.Impulse);
+    }
+
+    public void fire()
+    {
+        GameObject obj = Instantiate(fire_boll, this.transform);
     }
 }
